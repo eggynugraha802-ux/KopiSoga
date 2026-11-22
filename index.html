@@ -1,0 +1,886 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KOPI SOGA — Daftar Menu Digital</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter & Lora (Serif Klasik Coffeehouse) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+
+    <!-- Konfigurasi Warna & Tipografi Kustom -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sbux: {
+                            green: '#006241',
+                            forest: '#1E3932',
+                            mint: '#EDF4F0',
+                            border: '#C4D6CE',
+                        },
+                        terra: {
+                            DEFAULT: '#C0583C',
+                            deep: '#B84F34',
+                            soft: '#F7EFEA',
+                        },
+                        ivory: {
+                            DEFAULT: '#FAF8F4',
+                            card: '#FFFFFF',
+                            muted: '#F3EFE8',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        serif: ['Lora', 'Georgia', 'Times New Roman', 'serif'],
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        /* Sembunyikan scrollbar horizontal pada navigasi tab kategori */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Animasi pulse halus beraksen terakota untuk badge BEST SELLER */
+        @keyframes terracottaPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(192, 88, 60, 0.48);
+            }
+            50% {
+                transform: scale(1.03);
+                box-shadow: 0 0 0 6px rgba(192, 88, 60, 0);
+            }
+        }
+
+        .badge-best-seller {
+            animation: terracottaPulse 2.4s infinite ease-in-out;
+        }
+
+        /* Transisi lembut saat memfilter kategori */
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-section {
+            animation: fadeSlideUp 0.25s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-[#E6E2DA] text-[#1E2D28] font-sans antialiased selection:bg-[#006241] selection:text-[#FAF8F4]">
+
+    <!-- Wrapper Frame Layar Smartphone Modern (Max-Width 430px Terpusat) -->
+    <div class="min-h-screen w-full max-w-[430px] mx-auto bg-ivory shadow-[0_12px_40px_rgba(30,57,50,0.16)] border-x border-[#D5E0DB] flex flex-col relative">
+
+        <!-- =========================================================
+             1. HEADER ELEGAN BERTEMA KOPI SOGA + TOGGLE MODE EDIT HARGA
+        ========================================================== -->
+        <header class="bg-sbux-forest text-ivory relative overflow-hidden">
+            <!-- Dekorasi Garis Aksen Terakota di Puncak -->
+            <div class="h-1.5 w-full bg-gradient-to-r from-sbux-green via-terra to-terra-deep"></div>
+
+            <!-- Ornamen Lingkaran Halus Latar Header -->
+            <div class="pointer-events-none absolute -right-10 -top-10 w-36 h-36 rounded-full bg-sbux-green/35 blur-sm"></div>
+            <div class="pointer-events-none absolute -left-8 bottom-0 w-28 h-28 rounded-full bg-terra/20 blur-sm"></div>
+
+            <div class="px-4 pt-3.5 pb-4 relative z-10">
+                <!-- Baris Atas: Label QR Menu & Tombol Toggle Mode Edit Harga -->
+                <div class="flex items-center justify-between gap-2 mb-3">
+                    <span class="inline-flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.16em] uppercase px-2.5 py-1 rounded-full bg-sbux-green/60 text-[#D8EBE2] border border-[#2D5A4C]">
+                        <span class="w-1.5 h-1.5 rounded-full bg-terra"></span>
+                        Digital QR Menu
+                    </span>
+
+                    <!-- Tombol Toggle Mode Edit Harga -->
+                    <button
+                        id="toggleEditBtn"
+                        type="button"
+                        aria-pressed="false"
+                        class="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-full text-[11px] font-medium transition-all duration-200 border border-[#356355] bg-[#162C26]/90 text-[#E5EFEA] hover:border-terra active:scale-95"
+                    >
+                        <svg id="editIcon" class="w-3.5 h-3.5 text-terra transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
+                        </svg>
+                        <span id="toggleEditLabel">Mode Edit Harga</span>
+                        <span id="toggleSwitchTrack" class="w-7 h-4 rounded-full bg-[#2C4B42] p-0.5 flex items-center transition-colors">
+                            <span id="toggleSwitchThumb" class="w-3 h-3 rounded-full bg-[#B9CFC6] transform transition-transform"></span>
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Identitas Brand KOPI SOGA -->
+                <div class="flex items-center gap-3.5">
+                    <!-- Emblem Logo SVG Kustom Kopi Soga -->
+                    <div class="w-14 h-14 rounded-2xl bg-sbux-green border-2 border-terra/80 flex items-center justify-center shrink-0 shadow-md">
+                        <svg class="w-9 h-9" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <circle cx="24" cy="24" r="20" stroke="#FAF8F4" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.65" />
+                            <!-- Biji Kopi & Daun Botani -->
+                            <path d="M24 11C17.5 11 13 16.5 13 24C13 31.5 17.5 37 24 37C30.5 37 35 31.5 35 24C35 16.5 30.5 11 24 11Z" fill="#FAF8F4" />
+                            <path d="M24.2 12.2C21.5 17 26.8 23.5 23.8 35.8" stroke="#1E3932" stroke-width="2.2" stroke-linecap="round" />
+                            <circle cx="34" cy="14" r="4" fill="#C0583C" stroke="#FAF8F4" stroke-width="1.2" />
+                        </svg>
+                    </div>
+
+                    <div class="min-w-0">
+                        <p class="text-[10px] font-bold tracking-[0.22em] uppercase text-[#E89A84] mb-0.5">
+                            Handcrafted Coffee &amp; Mocktail
+                        </p>
+                        <h1 class="font-serif text-2xl font-bold tracking-wide text-ivory leading-tight">
+                            KOPI SOGA
+                        </h1>
+                        <p class="text-[11.5px] text-[#C8DDD4] leading-snug mt-0.5">
+                            Sajian Panas (Hot), Dingin (Iced) &amp; Kemasan Botol Siap Bawa
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Panduan & Reset Saat Mode Edit Harga Aktif -->
+            <div id="editModeBanner" class="hidden bg-terra-soft text-sbux-forest border-t border-terra/30 px-4 py-2.5">
+                <div class="flex items-center justify-between gap-2">
+                    <p class="text-[11px] leading-snug text-[#3B2E2A]">
+                        <strong class="text-terra-deep">Mode Edit Aktif:</strong> Ketuk kotak harga untuk mengisi/mengubah nominal. Tersimpan otomatis.
+                    </p>
+                    <button
+                        id="resetPricesBtn"
+                        type="button"
+                        class="shrink-0 px-2.5 py-1 rounded-lg text-[10.5px] font-semibold bg-white text-terra-deep border border-terra/40 hover:bg-terra hover:text-white transition-colors active:scale-95"
+                    >
+                        Reset Harga
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- =========================================================
+             2. NAVIGASI TAB KATEGORI STICKY (GESER HORIZONTAL)
+        ========================================================== -->
+        <nav aria-label="Kategori Menu" class="sticky top-0 z-30 bg-ivory/95 backdrop-blur-md border-b border-[#D5E0DB] shadow-[0_2px_10px_rgba(30,57,50,0.05)]">
+            <div id="categoryTabs" class="flex items-center gap-2 px-3.5 py-2.5 overflow-x-auto no-scrollbar scroll-smooth">
+                <button
+                    type="button"
+                    data-filter="all"
+                    class="tab-btn active shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 bg-sbux-green text-ivory shadow-sm"
+                >
+                    Semua
+                </button>
+                <button
+                    type="button"
+                    data-filter="coffee-base"
+                    class="tab-btn shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 bg-white text-sbux-forest border border-[#D5E0DB] hover:border-sbux-green"
+                >
+                    Coffee Base
+                </button>
+                <button
+                    type="button"
+                    data-filter="non-coffee"
+                    class="tab-btn shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 bg-white text-sbux-forest border border-[#D5E0DB] hover:border-sbux-green"
+                >
+                    Non-Coffee
+                </button>
+                <button
+                    type="button"
+                    data-filter="coffee-mocktail"
+                    class="tab-btn shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 bg-white text-sbux-forest border border-[#D5E0DB] hover:border-sbux-green"
+                >
+                    Coffee Mocktail
+                </button>
+                <button
+                    type="button"
+                    data-filter="botolan"
+                    class="tab-btn shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 bg-white text-sbux-forest border border-[#D5E0DB] hover:border-sbux-green"
+                >
+                    Menu Botolan
+                </button>
+            </div>
+        </nav>
+
+        <!-- =========================================================
+             3. DAFTAR LENGKAP MENU MINUMAN (DIRENDER DINAMIS + STORAGE)
+        ========================================================== -->
+        <main id="menuContainer" class="flex-1 px-3.5 pt-4 pb-6 space-y-6">
+            <!-- Konten Kategori & Kartu Menu dirender via JavaScript agar sinkron dengan penyimpanan harga -->
+        </main>
+
+        <!-- =========================================================
+             4. CATATAN KAKI INFORMASI PENYAJIAN
+        ========================================================== -->
+        <footer class="px-3.5 pb-7 pt-1">
+            <div class="rounded-2xl bg-sbux-mint/80 border border-sbux-border border-t-[3px] border-t-sbux-green p-4 shadow-sm">
+                <div class="flex items-center gap-2 mb-2.5">
+                    <span class="w-2 h-2 rounded-full bg-terra"></span>
+                    <h2 class="font-serif text-xs font-bold uppercase tracking-wider text-sbux-forest">
+                        Informasi Penyajian &amp; Pemesanan
+                    </h2>
+                </div>
+
+                <ul class="space-y-2 text-[11.5px] leading-relaxed text-[#384A44]">
+                    <li class="flex items-start gap-2">
+                        <span class="text-terra-deep font-bold mt-0.5">•</span>
+                        <span>
+                            <strong class="text-sbux-forest">Penyajian Hot &amp; Iced:</strong> Tersedia untuk seluruh menu <em>Coffee Base</em> dan <em>Non-Coffee</em>. Tingkat kemanisan (gula) pada <em>Coffee Base</em> dapat disesuaikan dengan permintaan.
+                        </span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-terra-deep font-bold mt-0.5">•</span>
+                        <span>
+                            <strong class="text-sbux-forest">Khusus Iced Only:</strong> Seluruh varian <em>Coffee Mocktail</em> (<em>Americano Berry</em> &amp; <em>Americano Orange</em>) diracik khusus untuk penyajian dingin (tidak tersedia varian <em>Hot</em>).
+                        </span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-terra-deep font-bold mt-0.5">•</span>
+                        <span>
+                            <strong class="text-sbux-forest">Ketentuan Pre-Order Botolan:</strong> Seluruh kemasan botol ukuran <strong>250 ml, 500 ml, dan 1 Liter</strong> tersedia melalui sistem <strong>Pre-Order (PO)</strong> untuk menjaga kesegaran rasa. Simpan di dalam lemari pendingin (<em>chiller</em>) dan kocok perlahan sebelum disajikan.
+                        </span>
+                    </li>
+                </ul>
+
+                <div class="mt-3.5 pt-2.5 border-t border-sbux-border/80 flex items-center justify-between text-[10.5px] text-[#52635D]">
+                    <span class="font-serif font-semibold text-sbux-forest">KOPI SOGA</span>
+                    <span>Terima kasih telah memesan</span>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Toast Notifikasi Non-Blocking (Pengganti alert/confirm) -->
+        <div
+            id="toastMessage"
+            role="status"
+            aria-live="polite"
+            class="pointer-events-none fixed bottom-5 left-1/2 -translate-x-1/2 z-50 opacity-0 translate-y-2 transition-all duration-200 px-4 py-2 rounded-full bg-sbux-forest text-ivory text-xs font-medium shadow-lg border border-terra/50 flex items-center gap-2 whitespace-nowrap"
+        >
+            <span class="w-2 h-2 rounded-full bg-terra"></span>
+            <span id="toastText">Harga tersimpan</span>
+        </div>
+
+    </div>
+
+    <script>
+        /**
+         * Data Struktur Lengkap Menu Kopi Soga
+         * Mengadaptasi 4 kategori dari dokumen menu A3:
+         * 1. Coffee Base (Hot & Iced)
+         * 2. Non-Coffee (Hot & Iced)
+         * 3. Coffee Mocktail (Iced Only - Americano Berry BEST SELLER)
+         * 4. Signature & Menu Botolan / Pre-Order (250 ml, 500 ml, 1 Liter - KSS BEST SELLER)
+         */
+        const MENU_SECTIONS = [
+            {
+                id: 'coffee-base',
+                roman: 'I',
+                title: 'Coffee Base',
+                badge: 'Tersedia Hot / Iced',
+                type: 'hot-iced',
+                items: [
+                    {
+                        id: 'cb-latte',
+                        name: 'Cafe Latte',
+                        desc: 'Espresso single berpadu dengan susu UHT lembut (gula optional)',
+                        bestSeller: false,
+                        prices: { hot: '', iced: '' },
+                    },
+                    {
+                        id: 'cb-cappuccino',
+                        name: 'Cappuccino',
+                        desc: 'Espresso double pekat dengan susu UHT & lapisan foam lembut (gula optional)',
+                        bestSeller: false,
+                        prices: { hot: '', iced: '' },
+                    },
+                    {
+                        id: 'cb-americano',
+                        name: 'Americano',
+                        desc: 'Ekstraksi espresso single dengan air mineral panas atau dingin',
+                        bestSeller: false,
+                        prices: { hot: '', iced: '' },
+                    },
+                ],
+            },
+            {
+                id: 'non-coffee',
+                roman: 'II',
+                title: 'Non-Coffee',
+                badge: 'Tersedia Hot / Iced',
+                type: 'hot-iced',
+                items: [
+                    {
+                        id: 'nc-matcha',
+                        name: 'Matcha Latte',
+                        desc: 'Racikan bubuk matcha pilihan dengan susu UHT & creamer lembut',
+                        bestSeller: false,
+                        prices: { hot: '', iced: '' },
+                    },
+                    {
+                        id: 'nc-chocolate',
+                        name: 'Chocolate',
+                        desc: 'Cokelat klasik creamy dipadukan dengan susu UHT & creamer',
+                        bestSeller: false,
+                        prices: { hot: '', iced: '' },
+                    },
+                ],
+            },
+            {
+                id: 'coffee-mocktail',
+                roman: 'III',
+                title: 'Coffee Mocktail',
+                badge: 'Khusus Iced Only',
+                type: 'iced-only',
+                items: [
+                    {
+                        id: 'cm-berry',
+                        name: 'Americano Berry',
+                        desc: 'Perpaduan espresso segar dengan racikan selai stroberi & bluberi',
+                        bestSeller: true,
+                        prices: { iced: '' },
+                    },
+                    {
+                        id: 'cm-orange',
+                        name: 'Americano Orange',
+                        desc: 'Perpaduan espresso dengan kesegaran racikan sari jeruk citrus',
+                        bestSeller: false,
+                        prices: { iced: '' },
+                    },
+                ],
+            },
+            {
+                id: 'botolan',
+                roman: 'IV',
+                title: 'Signature & Menu Botolan',
+                badge: 'Pre-Order • 250 ml • 500 ml • 1 Liter',
+                type: 'bottle',
+                items: [
+                    {
+                        id: 'btl-kss',
+                        name: 'Kopi Susu Soga (KSS)',
+                        desc: 'Signature house blend espresso dengan gula aren & creamer lembut',
+                        bestSeller: true,
+                        prices: { b250: '', b500: '', b1000: '' },
+                    },
+                    {
+                        id: 'btl-berry',
+                        name: 'Americano Berry Botolan',
+                        desc: 'Racikan espresso & berry base segar dalam kemasan siap tuang',
+                        bestSeller: false,
+                        prices: { b250: '', b500: '', b1000: '' },
+                    },
+                    {
+                        id: 'btl-orange',
+                        name: 'Americano Orange Botolan',
+                        desc: 'Racikan espresso & sari jeruk citrus segar dalam kemasan siap tuang',
+                        bestSeller: false,
+                        prices: { b250: '', b500: '', b1000: '' },
+                    },
+                    {
+                        id: 'btl-latte',
+                        name: 'Cafe Latte Botolan',
+                        desc: 'Espresso single dengan susu UHT dingin (gula optional)',
+                        bestSeller: false,
+                        prices: { b250: '', b500: '', b1000: '' },
+                    },
+                    {
+                        id: 'btl-cappuccino',
+                        name: 'Cappuccino Botolan',
+                        desc: 'Espresso double pekat dengan susu UHT dingin (gula optional)',
+                        bestSeller: false,
+                        prices: { b250: '', b500: '', b1000: '' },
+                    },
+                    {
+                        id: 'btl-matcha',
+                        name: 'Matcha Latte Botolan',
+                        desc: 'Racikan matcha creamy dengan susu UHT dingin',
+                        bestSeller: false,
+                        prices: { b250: '', b500: '', b1000: '' },
+                    },
+                    {
+                        id: 'btl-chocolate',
+                        name: 'Chocolate Botolan',
+                        desc: 'Racikan cokelat klasik creamy dengan susu UHT dingin',
+                        bestSeller: false,
+                        prices: { b250: '', b500: '', b1000: '' },
+                    },
+                ],
+            },
+        ];
+
+        const STORAGE_KEY = 'kopi_soga_mobile_menu_prices_v1';
+
+        // State Aplikasi
+        let savedPrices = {};
+        let isEditMode = false;
+        let activeFilter = 'all';
+        let resetConfirmPending = false;
+        let resetConfirmTimer = null;
+        let toastTimer = null;
+
+        // Muat harga tersimpan dari localStorage dengan error handling
+        function loadPrices() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && typeof parsed === 'object') {
+                        savedPrices = parsed;
+                    }
+                }
+            } catch (err) {
+                console.warn('Gagal memuat penyimpanan lokal:', err);
+                savedPrices = {};
+            }
+        }
+
+        // Simpan harga ke localStorage
+        function persistPrices() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(savedPrices));
+            } catch (err) {
+                console.warn('Gagal menyimpan harga ke penyimpanan lokal:', err);
+            }
+        }
+
+        // Format input harga agar seragam dan mudah dibaca di mobile
+        function formatPriceInput(rawValue) {
+            const trimmed = (rawValue || '').trim();
+            if (!trimmed) return '';
+
+            // Jika pengguna mengetik angka murni (mis. 18000 atau 18.000), format menjadi "Rp 18.000"
+            const digitsOnly = trimmed.replace(/[^\d]/g, '');
+            const hasLetters = /[a-zA-Z]/.test(trimmed.replace(/^rp\.?\s*/i, ''));
+
+            if (!hasLetters && digitsOnly.length > 0) {
+                const num = parseInt(digitsOnly, 10);
+                if (!isNaN(num) && num > 0) {
+                    return 'Rp ' + num.toLocaleString('id-ID');
+                }
+            }
+
+            // Jika format teks kustom (mis. "18K" atau "Rp 18K"), pastikan rapi
+            if (/^rp/i.test(trimmed)) {
+                return trimmed.replace(/^rp\.?\s*/i, 'Rp ');
+            }
+            return 'Rp ' + trimmed;
+        }
+
+        // Ambil nilai harga tersimpan untuk item & varian tertentu
+        function getPriceValue(itemId, variantKey) {
+            return (savedPrices[itemId] && savedPrices[itemId][variantKey]) || '';
+        }
+
+        // Perbarui harga untuk item & varian tertentu
+        function setPriceValue(itemId, variantKey, formattedValue) {
+            if (!savedPrices[itemId]) {
+                savedPrices[itemId] = {};
+            }
+            savedPrices[itemId][variantKey] = formattedValue;
+            persistPrices();
+        }
+
+        // Tampilkan notifikasi toast singkat
+        function showToast(message) {
+            const toast = document.getElementById('toastMessage');
+            const toastText = document.getElementById('toastText');
+            if (!toast || !toastText) return;
+
+            toastText.textContent = message;
+            toast.classList.remove('opacity-0', 'translate-y-2');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }, 1900);
+        }
+
+        // Helper escape HTML untuk keamanan teks
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // Render satu slot harga (mendukung tampilan normal QR maupun input klik di Mode Edit)
+        function renderPriceSlot({ itemId, variantKey, label, labelTone = 'green', compact = false }) {
+            const currentVal = getPriceValue(itemId, variantKey);
+            const hasPrice = Boolean(currentVal);
+
+            const labelColorClass =
+                labelTone === 'terra'
+                    ? 'text-terra-deep'
+                    : 'text-sbux-green';
+
+            if (!isEditMode) {
+                // Tampilan QR Menu Pelanggan (Rapi & Bersih)
+                const displayVal = hasPrice ? escapeHtml(currentVal) : 'Rp —';
+                const valColorClass = hasPrice ? 'text-terra-deep font-bold' : 'text-[#8C9A94] font-semibold';
+
+                return `
+                    <div class="rounded-xl bg-ivory border border-[#E2E8E4] ${compact ? 'px-2 py-2 text-center' : 'px-3 py-2 flex items-center justify-between'}">
+                        <span class="text-[10.5px] font-bold uppercase tracking-wider ${labelColorClass} ${compact ? 'block mb-0.5' : ''}">
+                            ${escapeHtml(label)}
+                        </span>
+                        <span class="${compact ? 'text-[12px] block' : 'text-[13px]'} ${valColorClass} tabular-nums">
+                            ${displayVal}
+                        </span>
+                    </div>
+                `;
+            }
+
+            // Tampilan Mode Edit Harga (Interaktif saat diklik/tap)
+            const placeholderText = hasPrice ? escapeHtml(currentVal) : 'Isi Harga';
+            return `
+                <button
+                    type="button"
+                    data-edit-slot="true"
+                    data-item-id="${escapeHtml(itemId)}"
+                    data-variant-key="${escapeHtml(variantKey)}"
+                    data-label="${escapeHtml(label)}"
+                    class="w-full text-left rounded-xl bg-terra-soft/75 border border-dashed border-terra hover:border-terra-deep hover:bg-terra-soft transition-colors ${compact ? 'px-1.5 py-2 text-center' : 'px-3 py-2 flex items-center justify-between'} active:scale-[0.98]"
+                >
+                    <span class="text-[10px] font-bold uppercase tracking-wider ${labelColorClass} ${compact ? 'block mb-0.5' : ''}">
+                        ${escapeHtml(label)}
+                    </span>
+                    <span class="${compact ? 'text-[11.5px] justify-center' : 'text-[12.5px]'} inline-flex items-center gap-1 font-bold ${hasPrice ? 'text-terra-deep' : 'text-terra/80'}">
+                        <span>${placeholderText}</span>
+                        <svg class="w-3 h-3 shrink-0 opacity-75" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                    </span>
+                </button>
+            `;
+        }
+
+        // Render Badge BEST SELLER dengan animasi pulse halus beraksen terakota
+        function renderBestSellerBadge() {
+            return `
+                <span class="badge-best-seller inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9.5px] font-bold tracking-wider uppercase bg-terra text-white shrink-0">
+                    <svg class="w-2.5 h-2.5 fill-current" viewBox="0 0 20 20" aria-hidden="true">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                    BEST SELLER
+                </span>
+            `;
+        }
+
+        // Render seluruh kategori & kartu menu
+        function renderMenu() {
+            const container = document.getElementById('menuContainer');
+            if (!container) return;
+
+            const sectionsToRender =
+                activeFilter === 'all'
+                    ? MENU_SECTIONS
+                    : MENU_SECTIONS.filter((sec) => sec.id === activeFilter);
+
+            container.innerHTML = sectionsToRender
+                .map((section) => {
+                    const cardsHtml = section.items
+                        .map((item) => {
+                            const highlightBorder = item.bestSeller
+                                ? 'border-terra/45 ring-1 ring-terra/15'
+                                : 'border-[#DCE5E0]';
+
+                            let pricingBlockHtml = '';
+
+                            if (section.type === 'hot-iced') {
+                                pricingBlockHtml = `
+                                    <div class="grid grid-cols-2 gap-2 mt-3">
+                                        ${renderPriceSlot({
+                                            itemId: item.id,
+                                            variantKey: 'hot',
+                                            label: 'Hot',
+                                            labelTone: 'terra',
+                                            compact: false,
+                                        })}
+                                        ${renderPriceSlot({
+                                            itemId: item.id,
+                                            variantKey: 'iced',
+                                            label: 'Iced',
+                                            labelTone: 'green',
+                                            compact: false,
+                                        })}
+                                    </div>
+                                `;
+                            } else if (section.type === 'iced-only') {
+                                pricingBlockHtml = `
+                                    <div class="mt-3 flex items-center justify-between gap-2.5">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-sbux-mint text-sbux-green border border-sbux-border text-[10.5px] font-bold uppercase tracking-wider shrink-0">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18m0-18l-3 3m3-3l3 3m-3 15l-3-3m3 3l3-3M3 12h18M3 12l3-3m-3 3l3 3m15-3l-3-3m3 3l-3 3" />
+                                            </svg>
+                                            Iced Only
+                                        </span>
+                                        <div class="flex-1">
+                                            ${renderPriceSlot({
+                                                itemId: item.id,
+                                                variantKey: 'iced',
+                                                label: 'Harga',
+                                                labelTone: 'terra',
+                                                compact: false,
+                                            })}
+                                        </div>
+                                    </div>
+                                `;
+                            } else if (section.type === 'bottle') {
+                                pricingBlockHtml = `
+                                    <div class="grid grid-cols-3 gap-1.5 mt-3">
+                                        ${renderPriceSlot({
+                                            itemId: item.id,
+                                            variantKey: 'b250',
+                                            label: '250 ml',
+                                            labelTone: 'green',
+                                            compact: true,
+                                        })}
+                                        ${renderPriceSlot({
+                                            itemId: item.id,
+                                            variantKey: 'b500',
+                                            label: '500 ml',
+                                            labelTone: 'green',
+                                            compact: true,
+                                        })}
+                                        ${renderPriceSlot({
+                                            itemId: item.id,
+                                            variantKey: 'b1000',
+                                            label: '1 Liter',
+                                            labelTone: 'terra',
+                                            compact: true,
+                                        })}
+                                    </div>
+                                `;
+                            }
+
+                            return `
+                                <article class="rounded-2xl bg-ivory-card border ${highlightBorder} p-3.5 shadow-[0_2px_10px_rgba(30,57,50,0.04)] transition-all">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <div class="min-w-0">
+                                            <div class="flex items-center gap-1.5 flex-wrap">
+                                                <h3 class="font-serif text-[15.5px] font-bold text-sbux-forest leading-snug">
+                                                    ${escapeHtml(item.name)}
+                                                </h3>
+                                                ${
+                                                    section.type === 'bottle'
+                                                        ? '<span class="text-[9.5px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-sbux-mint text-sbux-green border border-sbux-border">PO</span>'
+                                                        : ''
+                                                }
+                                            </div>
+                                            <p class="text-[12px] text-[#52635D] leading-relaxed mt-0.5">
+                                                ${escapeHtml(item.desc)}
+                                            </p>
+                                        </div>
+                                        ${item.bestSeller ? renderBestSellerBadge() : ''}
+                                    </div>
+                                    ${pricingBlockHtml}
+                                </article>
+                            `;
+                        })
+                        .join('');
+
+                    return `
+                        <section aria-labelledby="heading-${section.id}" class="animate-section">
+                            <!-- Header Kategori dengan Sentuhan Hijau Starbucks & Terakota -->
+                            <div class="rounded-xl bg-terra-soft border-l-4 border-l-terra border-y border-r border-[#E6D5CB] px-3 py-2 mb-3 flex items-center justify-between gap-2">
+                                <h2 id="heading-${section.id}" class="font-serif text-[13.5px] font-bold uppercase tracking-wide text-sbux-green">
+                                    ${section.roman}. ${escapeHtml(section.title)}
+                                </h2>
+                                <span class="text-[10px] font-bold tracking-wide text-terra-deep bg-white/85 px-2 py-0.5 rounded-full border border-terra/25 shrink-0">
+                                    ${escapeHtml(section.badge)}
+                                </span>
+                            </div>
+
+                            <div class="space-y-2.5">
+                                ${cardsHtml}
+                            </div>
+                        </section>
+                    `;
+                })
+                .join('');
+        }
+
+        // Ubah tombol slot harga menjadi input inline langsung saat diklik pada Mode Edit Harga
+        function activateInlinePriceEditor(slotButton) {
+            if (!isEditMode || !slotButton) return;
+
+            const itemId = slotButton.getAttribute('data-item-id');
+            const variantKey = slotButton.getAttribute('data-variant-key');
+            const label = slotButton.getAttribute('data-label');
+            const existingFormatted = getPriceValue(itemId, variantKey);
+            const rawNumeric = existingFormatted.replace(/^Rp\s*/i, '');
+
+            const wrapper = document.createElement('div');
+            wrapper.className =
+                'rounded-xl bg-white border-2 border-terra px-2 py-1.5 shadow-sm flex flex-col justify-center';
+
+            const topLabel = document.createElement('span');
+            topLabel.className = 'text-[9.5px] font-bold uppercase tracking-wider text-terra-deep block mb-0.5';
+            topLabel.textContent = label;
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.inputMode = 'numeric';
+            input.value = rawNumeric;
+            input.placeholder = 'cth: 18000';
+            input.setAttribute('aria-label', `Edit harga ${label}`);
+            input.className =
+                'w-full text-xs font-bold text-sbux-forest bg-transparent focus:outline-none tabular-nums';
+
+            wrapper.appendChild(topLabel);
+            wrapper.appendChild(input);
+
+            slotButton.replaceWith(wrapper);
+            input.focus();
+            input.select();
+
+            let committed = false;
+            function commitChange() {
+                if (committed) return;
+                committed = true;
+                const formatted = formatPriceInput(input.value);
+                setPriceValue(itemId, variantKey, formatted);
+                renderMenu();
+                showToast(formatted ? `Harga ${label} disimpan (${formatted})` : `Harga ${label} dikosongkan`);
+            }
+
+            input.addEventListener('blur', commitChange);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    input.blur();
+                } else if (e.key === 'Escape') {
+                    committed = true;
+                    renderMenu();
+                }
+            });
+        }
+
+        // Perbarui tampilan visual tombol toggle Mode Edit Harga
+        function updateEditToggleUI() {
+            const btn = document.getElementById('toggleEditBtn');
+            const track = document.getElementById('toggleSwitchTrack');
+            const thumb = document.getElementById('toggleSwitchThumb');
+            const banner = document.getElementById('editModeBanner');
+
+            btn.setAttribute('aria-pressed', String(isEditMode));
+
+            if (isEditMode) {
+                btn.classList.remove('bg-[#162C26]/90', 'border-[#356355]', 'text-[#E5EFEA]');
+                btn.classList.add('bg-terra', 'border-terra-deep', 'text-white', 'shadow-sm');
+                track.classList.remove('bg-[#2C4B42]');
+                track.classList.add('bg-sbux-forest');
+                thumb.classList.remove('bg-[#B9CFC6]', 'translate-x-0');
+                thumb.classList.add('bg-ivory', 'translate-x-3');
+                banner.classList.remove('hidden');
+            } else {
+                btn.classList.add('bg-[#162C26]/90', 'border-[#356355]', 'text-[#E5EFEA]');
+                btn.classList.remove('bg-terra', 'border-terra-deep', 'text-white', 'shadow-sm');
+                track.classList.add('bg-[#2C4B42]');
+                track.classList.remove('bg-sbux-forest');
+                thumb.classList.add('bg-[#B9CFC6]', 'translate-x-0');
+                thumb.classList.remove('bg-ivory', 'translate-x-3');
+                banner.classList.add('hidden');
+            }
+        }
+
+        // Inisialisasi Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPrices();
+            renderMenu();
+
+            // Toggle Mode Edit Harga
+            const toggleEditBtn = document.getElementById('toggleEditBtn');
+            toggleEditBtn.addEventListener('click', () => {
+                isEditMode = !isEditMode;
+                updateEditToggleUI();
+                renderMenu();
+                showToast(isEditMode ? 'Mode Edit Harga aktif' : 'Tampilan Menu QR aktif');
+            });
+
+            // Tombol Reset Harga (konfirmasi 2 tahap inline tanpa confirm())
+            const resetPricesBtn = document.getElementById('resetPricesBtn');
+            resetPricesBtn.addEventListener('click', () => {
+                if (!resetConfirmPending) {
+                    resetConfirmPending = true;
+                    resetPricesBtn.textContent = 'Yakin Reset?';
+                    resetPricesBtn.classList.add('bg-terra-deep', 'text-white');
+                    clearTimeout(resetConfirmTimer);
+                    resetConfirmTimer = setTimeout(() => {
+                        resetConfirmPending = false;
+                        resetPricesBtn.textContent = 'Reset Harga';
+                        resetPricesBtn.classList.remove('bg-terra-deep', 'text-white');
+                    }, 3000);
+                    return;
+                }
+
+                // Eksekusi reset
+                resetConfirmPending = false;
+                clearTimeout(resetConfirmTimer);
+                resetPricesBtn.textContent = 'Reset Harga';
+                resetPricesBtn.classList.remove('bg-terra-deep', 'text-white');
+
+                savedPrices = {};
+                persistPrices();
+                renderMenu();
+                showToast('Semua nominal harga telah direset');
+            });
+
+            // Delegasi klik pada slot harga saat Mode Edit aktif
+            const menuContainer = document.getElementById('menuContainer');
+            menuContainer.addEventListener('click', (e) => {
+                const slotBtn = e.target.closest('[data-edit-slot="true"]');
+                if (slotBtn && isEditMode) {
+                    activateInlinePriceEditor(slotBtn);
+                }
+            });
+
+            // Navigasi Tab Kategori Sticky
+            const categoryTabs = document.getElementById('categoryTabs');
+            categoryTabs.addEventListener('click', (e) => {
+                const tabBtn = e.target.closest('.tab-btn');
+                if (!tabBtn) return;
+
+                const selectedFilter = tabBtn.getAttribute('data-filter');
+                if (!selectedFilter || selectedFilter === activeFilter) return;
+
+                activeFilter = selectedFilter;
+
+                // Perbarui gaya tab aktif vs tidak aktif
+                categoryTabs.querySelectorAll('.tab-btn').forEach((btn) => {
+                    const isCurrent = btn === tabBtn;
+                    if (isCurrent) {
+                        btn.classList.remove('bg-white', 'text-sbux-forest', 'border', 'border-[#D5E0DB]');
+                        btn.classList.add('bg-sbux-green', 'text-ivory', 'shadow-sm');
+                        btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                    } else {
+                        btn.classList.add('bg-white', 'text-sbux-forest', 'border', 'border-[#D5E0DB]');
+                        btn.classList.remove('bg-sbux-green', 'text-ivory', 'shadow-sm');
+                    }
+                });
+
+                renderMenu();
+            });
+        });
+    </script>
+</body>
+</html>
+```
